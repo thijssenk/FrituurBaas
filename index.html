@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frituur Baas</title>
+  <meta name="description" content="Run je eigen snackbar: frituur patat, frikandellen, kroketten, kaassoufflés en bitterballen precies goudbruin en help je klanten op tijd.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="hud">
+      <div class="brand">🍟 Frituur <span>Baas</span></div>
+      <div class="stat"><span class="label">Dag</span><span class="value" id="hud-day">1</span></div>
+      <div class="stat"><span class="label">Klok</span><span class="value" id="hud-clock">11:00</span></div>
+      <div class="stat"><span class="label">Kassa</span><span class="value" id="hud-money">€ 20,00</span></div>
+      <div class="stat rep">
+        <span class="label">Reputatie</span>
+        <div class="repbar"><div id="hud-rep"></div></div>
+      </div>
+      <div class="hud-buttons">
+        <button class="iconbtn" data-act="pause" title="Pauze (P)">⏸</button>
+        <button class="iconbtn" data-act="mute" id="btn-mute" title="Geluid aan/uit">🔊</button>
+      </div>
+    </header>
+
+    <section class="counter">
+      <div class="awning"></div>
+      <div class="counter-top">
+        <div id="open-sign" class="open-sign">OPEN</div>
+        <div id="customers" class="customers"></div>
+      </div>
+    </section>
+
+    <section class="kitchen">
+      <div class="panel stock-panel">
+        <h2>🧊 Vriezer</h2>
+        <p class="panel-sub">Sleep naar een mandje</p>
+        <div id="stock" class="stock"></div>
+      </div>
+
+      <div class="panel fryer-panel">
+        <h2>🔥 Friteuse</h2>
+        <p class="panel-sub">Eén soort snack per mandje · haal eruit in de <b class="ok">groene</b> zone</p>
+        <div id="baskets" class="baskets"></div>
+      </div>
+
+      <div class="panel holding-panel">
+        <h2>🧺 Uitlekbak</h2>
+        <p class="panel-sub">Sleep naar het dienblad van een klant</p>
+        <div id="holding" class="holding" data-drop="holding"></div>
+        <div id="trash" class="trash" data-drop="trash">🗑️ Prullenbak</div>
+      </div>
+    </section>
+
+    <div id="hint" class="hint"></div>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <div id="overlay" class="overlay"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>
