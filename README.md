@@ -6,6 +6,8 @@ Run je eigen snackbar! Frituur patat, frikandellen, kroketten, kaassoufflés en 
 
 Open `index.html` in je browser. Je hebt geen installatie of server nodig.
 
+**Op je telefoon?** Open `mobile.html`. Die versie past op één scherm zonder scrollen: je tikt onderin op een snack, daarna op een mandje, en je tikt op een klant om alles wat klaar is meteen te serveren. De knop **Slechte weg** gooit alle rauwe, verbrande en koude snacks in één keer weg.
+
 ## Hoe werkt het?
 
 1. **De deuren gaan open.** Je ziet een lege toonbank, de vriezer en 3 lege frituurmanden.
@@ -35,4 +37,5 @@ Aan het eind van elke dag zie je je winst en kun je investeren in upgrades: een 
 
 - `index.html`: de opbouw van het scherm
 - `style.css`: de opmaak (werkt ook op telefoon)
+- `mobile.html` + `mobile.css`: de mobiele versie (gebruikt dezelfde `game.js`)
 - `game.js`: de spellogica, snack-tekeningen (SVG) en geluid (Web Audio)

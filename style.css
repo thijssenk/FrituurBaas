@@ -385,6 +385,15 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 .snack { display: block; overflow: visible; }
 
 /* ---------- Responsive ---------- */
+.mobile-link { display: none; }
+@media (max-width: 700px) {
+  .mobile-link {
+    display: block; margin-top: 12px; padding: 12px; text-align: center; font-weight: 600;
+    background: var(--red); color: #fff; border-radius: 12px; text-decoration: none; box-shadow: var(--shadow);
+  }
+  #app > .mobile-link { order: -1; }
+}
+
 @media (max-width: 960px) {
   .kitchen { grid-template-columns: 1fr 1fr; }
   .fryer-panel { grid-column: 1 / -1; order: -1; }

@@ -1,0 +1,252 @@
+/* Mobiele versie: alles op één scherm, tikken in plaats van slepen.
+   Wordt ná style.css geladen; .mobile-selectors winnen van de desktop-regels. */
+
+html, body.mobile { height: 100%; }
+
+body.mobile {
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  background-color: var(--tile-a);
+}
+
+body.mobile #app {
+  height: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 16px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+}
+
+/* ---------- HUD ---------- */
+.mobile .hud {
+  flex: none;
+  flex-wrap: nowrap;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 12px;
+}
+.mobile .stat { min-width: 0; }
+.mobile .stat .label { font-size: .58rem; letter-spacing: .5px; }
+.mobile .stat .value { font-size: 1rem; }
+.mobile .stat.rep { flex: 1; min-width: 0; }
+.mobile .stat.rep .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mobile .repbar { width: 100%; height: 9px; }
+.mobile .hud-buttons { gap: 4px; }
+.mobile .iconbtn { width: 34px; height: 34px; font-size: 1rem; }
+
+/* ---------- Klanten ---------- */
+.mobile .counter {
+  flex: 1 1 auto;
+  min-height: 150px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(#5b3a24, #4a2f1d);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.mobile .awning { position: relative; flex: none; height: 16px; border-radius: 0; background-size: auto; background: repeating-linear-gradient(90deg, var(--red) 0 26px, #fff 26px 52px); }
+.mobile .open-sign { top: 3px; right: 8px; font-size: .6rem; padding: 1px 6px; letter-spacing: 2px; border-width: 1px; }
+.mobile .customers {
+  flex: 1;
+  min-height: 0;
+  gap: 6px;
+  padding: 18px 6px 6px;
+  align-items: stretch;
+}
+.mobile .cust-slot {
+  min-height: 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .05);
+  padding: 4px 3px 6px;
+  justify-content: flex-end;
+  transition: background .15s, outline-color .15s;
+}
+.mobile .cust-slot.has-customer { background: rgba(255, 255, 255, .1); cursor: pointer; }
+.mobile .cust-slot.has-customer:active { background: rgba(255, 255, 255, .2); }
+.mobile .slot-empty { padding: 0; font-size: .72rem; }
+.mobile .tray { display: none; }
+
+.mobile .thought {
+  width: 100%;
+  min-width: 0;
+  padding: 4px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.mobile .thought::after { width: 9px; height: 9px; bottom: -7px; }
+.mobile .thought::before { width: 5px; height: 5px; bottom: -13px; }
+.mobile .oline { font-size: .72rem; gap: 1px; justify-content: center; }
+.mobile .oline .nm { display: none; }
+.mobile .oline .ic { width: 22px; height: 22px; }
+.mobile .oline .q { min-width: 0; }
+.mobile .oline.done { opacity: .55; }
+.mobile .oline.done .q::after { content: "✓"; }
+
+.mobile .person { font-size: 2rem; }
+.mobile .person .mood { right: -14px; top: -2px; font-size: .95rem; }
+.mobile .cname { font-size: .72rem; }
+.mobile .patience { width: 88%; height: 7px; margin: 3px 0 0; }
+.mobile .speech {
+  top: 2px;
+  font-size: .68rem;
+  white-space: normal;
+  width: max-content;
+  max-width: 110px;
+  text-align: center;
+  padding: 4px 6px;
+}
+.mobile .float-money { font-size: 1.05rem; top: 30%; }
+.mobile .float-money small { font-size: .7rem; }
+
+/* ---------- Friteuse ---------- */
+.mobile .fryer { flex: none; }
+.mobile .baskets {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-template-columns: none;
+  gap: 6px;
+}
+.mobile .basket { padding: 5px; gap: 4px; border-radius: 10px; }
+.mobile .bhead > span:first-child { white-space: nowrap; }
+.mobile .bhead { flex-direction: row; font-size: .7rem; min-height: 0; gap: 2px; }
+.mobile .bstatus { font-size: .62rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mobile .vat { height: 62px; border-width: 2px; }
+.mobile .wire { top: 3px; left: 4px; right: 4px; height: 40px; border-width: 2px; }
+.mobile .wire .snack { width: 22px; height: 22px; }
+.mobile .state-frying .wire { transform: translateY(18px); }
+.mobile .cookbar { height: 9px; }
+.mobile .bmeta { font-size: .62rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mobile .bmeta span { display: none; }
+.mobile .bactions { min-height: 40px; gap: 4px; }
+.mobile .btn { padding: 8px 2px; font-size: .85rem; border-radius: 9px; }
+.mobile .btn.small { width: 30px; }
+.mobile .empty-hint { font-size: .62rem; line-height: 1.2; }
+.mobile .basket .empty-hint::before { content: "Kies een snack en tik hier"; }
+.mobile .basket .empty-hint { font-size: 0; }
+.mobile .basket .empty-hint::before { font-size: .62rem; }
+
+/* ---------- Uitlekbak ---------- */
+.mobile .holding-bar {
+  flex: none;
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 6px 8px 8px;
+  box-shadow: var(--shadow);
+}
+.mobile .hb-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: .78rem; margin-bottom: 4px; }
+.mobile .hb-head span { color: var(--muted); font-size: .68rem; text-align: right; }
+.mobile .hb-row { display: flex; gap: 6px; }
+.mobile .holding {
+  flex: 1;
+  min-width: 0;
+  min-height: 70px;
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 10px 5px 4px;
+  border-width: 2px;
+  align-items: flex-start;
+  scrollbar-width: thin;
+}
+.mobile .holding .empty-hint { padding: 12px 0; width: 100%; font-size: .7rem; }
+.mobile .item { flex: none; width: 50px; }
+.mobile .item .snack { width: 36px; height: 36px; }
+.mobile .hb-actions { flex: none; display: flex; flex-direction: column; gap: 4px; width: 58px; }
+.mobile .trash { margin: 0; padding: 6px 0; font-size: 1.2rem; border-width: 2px; }
+.mobile .trashbad {
+  flex: 1;
+  border: 0;
+  border-radius: 8px;
+  background: #50565c;
+  color: #fff;
+  font-size: .62rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.mobile .trashbad:active { background: #3a3f44; }
+
+/* ---------- Vriezer (onderbalk) ---------- */
+.mobile .stockbar { flex: none; }
+.mobile .stock {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+  flex-direction: row;
+}
+.mobile .stock-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 5px 2px 4px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 0;
+}
+.mobile .stock-item:hover { transform: none; box-shadow: none; }
+.mobile .stock-item:active { transform: scale(.95); }
+.mobile .stock-item .snack { width: 34px; height: 34px; }
+.mobile .stock-item .nm { font-size: .64rem; line-height: 1.1; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mobile .stock-item .meta { font-size: .58rem; }
+.mobile .stock-item kbd { display: none; }
+
+/* ---------- Selectie & hints ---------- */
+.mobile .selected { outline-width: 3px; outline-offset: 1px; }
+body.mobile[data-mode="stock"] .basket { border-style: dashed; border-color: var(--orange); }
+body.mobile[data-mode="item"] .cust-slot.has-customer { outline: 2px dashed var(--orange); outline-offset: -2px; }
+body.mobile[data-mode="item"] .trash { border-color: var(--orange); }
+.mobile .cust-slot.over { outline: 3px solid var(--green) !important; }
+
+.mobile .hint { display: none; }
+.mobile .toasts {
+  top: auto;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+  width: calc(100% - 32px);
+  gap: 4px;
+}
+.mobile .toasts .toast:not(:last-child) { display: none; }
+.mobile .toast { font-size: .8rem; padding: 6px 12px; text-align: center; }
+
+/* ---------- Overlays ---------- */
+.mobile .card { padding: 18px 16px; border-radius: 16px; }
+.mobile .card h1 { font-size: 1.7rem; }
+.mobile .card ol { font-size: .9rem; padding-left: 18px; }
+.mobile .card .lead { font-size: .88rem; }
+.mobile .card .snackrow .snack { width: 42px; height: 42px; }
+.mobile .statgrid { font-size: .9rem; }
+.mobile .upg { grid-template-columns: 32px 1fr auto; gap: 8px; padding: 6px 8px; }
+.mobile .upg .ico { font-size: 1.4rem; }
+
+@media (max-width: 360px) {
+  .mobile .hud { gap: 7px; }
+  .mobile .stat .value { font-size: .9rem; }
+  .mobile .iconbtn { width: 30px; height: 30px; font-size: .9rem; }
+}
+
+/* Korte schermen (bijv. iPhone SE) */
+@media (max-height: 640px) {
+  body.mobile #app { gap: 5px; padding-top: 5px; }
+  .mobile .person { font-size: 1.6rem; }
+  .mobile .vat { height: 52px; }
+  .mobile .wire { height: 34px; }
+  .mobile .state-frying .wire { transform: translateY(14px); }
+  .mobile .holding { min-height: 62px; }
+  .mobile .stock-item .snack { width: 28px; height: 28px; }
+  .mobile .stock-item .meta { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile *, .mobile *::before, .mobile *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

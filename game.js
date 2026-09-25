@@ -32,6 +32,7 @@ const UPGRADES = [
 ];
 
 /* ---------- Helpers ---------- */
+const MOBILE = document.body.classList.contains('mobile');
 const $ = s => document.querySelector(s);
 const rand = n => Math.floor(Math.random() * n);
 const pick = arr => arr[rand(arr.length)];
@@ -158,7 +159,10 @@ const Sound = {
   },
   plop()  { this.tone(420, 0.12, 'sine', 0.18, 0, 1.8); },
   splash(){ this.burst(0.5, 0.3); },
-  ding()  { this.tone(1318, 0.5, 'sine', 0.16); this.tone(1760, 0.6, 'sine', 0.12, 0.12); },
+  ding()  {
+    this.tone(1318, 0.5, 'sine', 0.16); this.tone(1760, 0.6, 'sine', 0.12, 0.12);
+    if (MOBILE && !this.muted) { try { navigator.vibrate?.(80); } catch (e) { /* niet beschikbaar */ } }
+  },
   bell()  { this.tone(988, 0.25, 'triangle', 0.12); this.tone(784, 0.35, 'triangle', 0.12, 0.15); },
   cash()  { this.tone(1046, 0.08, 'square', 0.06); this.tone(1568, 0.3, 'square', 0.06, 0.08); this.burst(0.08, 0.12); },
   bad()   { this.tone(196, 0.35, 'sawtooth', 0.1, 0, 0.7); },
@@ -424,6 +428,33 @@ function removeItem(item) {
   renderHolding();
 }
 
+// Serveer alle goede, warme snacks uit de uitlekbak die deze klant nog nodig heeft
+function autoServe(slot) {
+  const c = G.customers[slot];
+  if (!c || c.state !== 'waiting') return;
+  let served = 0;
+  for (const l of c.order) {
+    while (l.got < l.qty && c.state === 'waiting') {
+      const item = G.holding.find(h => h.type === l.type && h.quality === 'perfect' && h.temp >= COLD_AT);
+      if (!item) break;
+      serve(slot, item);
+      served++;
+    }
+  }
+  if (!served) {
+    say(c, 'Mijn bestelling is nog niet klaar…', true);
+    Sound.bad();
+  }
+}
+
+// Gooi alle rauwe, verbrande en koude snacks in één keer weg
+function trashBad() {
+  const bad = G.holding.filter(h => h.quality !== 'perfect' || h.temp < COLD_AT);
+  if (!bad.length) { toast('Er ligt niets slechts in de uitlekbak.', ''); return; }
+  for (const h of bad) trashItem(h);
+  toast(`🗑️ ${bad.length} snack${bad.length > 1 ? 's' : ''} weggegooid`, '');
+}
+
 function trashItem(item) {
   removeItem(item);
   G.stats.wasted++;
@@ -479,12 +510,12 @@ function renderBasket(i) {
   }
   let actions = '<div class="empty-hint">Sleep een snack hierheen</div>';
   if (b.state === 'loaded') {
-    actions = `<button class="btn fry" data-act="fry:${i}">🔥 Start frituren</button>
+    actions = `<button class="btn fry" data-act="fry:${i}">🔥 ${MOBILE ? 'Bak!' : 'Start frituren'}</button>
       <button class="btn small" data-act="empty:${i}" title="Mandje leegmaken (geld terug)">✕</button>`;
   } else if (b.state === 'frying') {
-    actions = `<button class="btn out" data-act="lift:${i}">⬆️ Eruit halen</button>`;
+    actions = `<button class="btn out" data-act="lift:${i}">⬆️ ${MOBILE ? 'Eruit!' : 'Eruit halen'}</button>`;
   }
-  root.innerHTML = `<div class="bhead"><span>Mandje ${i + 1}</span><span class="bstatus"></span></div>
+  root.innerHTML = `<div class="bhead"><span>${MOBILE ? 'Mand' : 'Mandje'} ${i + 1}</span><span class="bstatus"></span></div>
     <div class="vat"><div class="oil"><div class="bubbles"></div></div><div class="wire">${items}</div></div>
     ${bar}
     <div class="bmeta">${b.type ? `${SNACKS[b.type].name} × ${b.count} <span style="opacity:.6">(max ${basketCap()})</span>` : 'Leeg'}</div>
@@ -573,8 +604,8 @@ function updateVisuals() {
     const q = quality(b.type, b.t);
     b.el.classList.toggle('is-perfect', q === 'perfect');
     b.el.classList.toggle('is-burnt', q === 'burnt');
-    b.refs.status.textContent = q === 'raw' ? `Bakken… ${b.t.toFixed(1)}s`
-      : q === 'perfect' ? '✨ PERFECT!' : '💀 VERBRAND';
+    b.refs.status.textContent = q === 'raw' ? `${MOBILE ? '' : 'Bakken… '}${b.t.toFixed(1)}s`
+      : q === 'perfect' ? (MOBILE ? '✨ NU!' : '✨ PERFECT!') : (MOBILE ? '💀' : '💀 VERBRAND');
   }
 
   // Uitlekbak
@@ -696,7 +727,11 @@ document.addEventListener('click', e => {
   if (act) { Sound.init(); handleAct(act.dataset.act); return; }
   if (!G.running || G.paused || e.target.closest('[data-drag]')) return;
   const tgt = e.target.closest('[data-drop]');
-  if (tgt && G.selected) {
+  if (tgt && tgt.dataset.drop.startsWith('tray:') && !G.selected?.startsWith('item:')) {
+    // Tik op een klant: serveer alles wat klaar is (een geselecteerde vriezer-snack vervalt)
+    if (G.selected) setSelected(null);
+    autoServe(+tgt.dataset.drop.split(':')[1]);
+  } else if (tgt && G.selected) {
     const payload = G.selected;
     const ok = doDrop(payload, tgt.dataset.drop);
     // Voorraad blijft geselecteerd zodat je snel meerdere kunt toevoegen
@@ -736,6 +771,7 @@ function handleAct(act) {
       Sound.setSizzle(Sound.muted ? 0 : G.baskets?.filter(b => b.state === 'frying').length || 0);
       return;
     case 'buy': return buy(arg);
+    case 'trashbad': if (G.running && !G.paused) trashBad(); return;
   }
 }
 
@@ -787,12 +823,17 @@ function showStart() {
     <h1>🍟 Frituur <span>Baas</span></h1>
     <p class="lead">Jij runt de drukste snackbar van het dorp. Bak alles precies goudbruin en help je klanten voordat hun geduld op is!</p>
     <div class="snackrow">${SNACK_ORDER.map(t => `<span data-paint="${t}">${snackSVG(t)}</span>`).join('')}</div>
-    <ol>
+    <ol>${MOBILE ? `
+      <li>Een klant komt binnen met een <b>denkwolkje</b> vol bestellingen.</li>
+      <li><b>Tik</b> onderin op een snack en daarna op een <b>mandje</b>. Tik vaker op het mandje voor meer stuks.</li>
+      <li>Tik op <b>🔥 Bak!</b> De snack kleurt van bleek naar goudbruin naar zwart.</li>
+      <li>Tik op <b>⬆️ Eruit!</b> als de naald in de <b style="color:var(--green)">groene zone</b> staat. Je telefoon trilt als het zover is.</li>
+      <li><b>Tik op de klant</b> om alles wat klaar is meteen te serveren.</li>` : `
       <li>Een klant komt binnen met een <b>denkwolkje</b> vol bestellingen.</li>
       <li><b>Sleep</b> snacks uit de vriezer naar een frituurmandje (of klik ze aan en klik op een mandje; toetsen <b>1–5</b> werken ook).</li>
       <li>Klik op <b>🔥 Start frituren</b>. Kijk hoe de snack van bleek naar goudbruin naar zwart kleurt.</li>
       <li>Haal het mandje eruit als de naald in de <b style="color:var(--green)">groene zone</b> staat.</li>
-      <li>Sleep de snacks naar het <b>dienblad</b> van de klant voordat ze koud worden.</li>
+      <li>Sleep de snacks naar het <b>dienblad</b> van de klant voordat ze koud worden, of klik op de klant om alles wat klaar is in één keer te serveren.</li>`}
     </ol>
     <p class="lead">Snel + perfect = flinke fooi. Rauw, verbrand of koud? Dan weigert de klant. Te lang wachten? Dan loopt de klant boos weg en daalt je reputatie. Reputatie op 0 = failliet!</p>
     <button class="btn big" data-act="start">Open de zaak! 🔑</button>

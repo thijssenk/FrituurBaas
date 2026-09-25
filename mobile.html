@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2b1d14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Frituur Baas Mobiel</title>
+  <meta name="description" content="Frituur Baas voor je telefoon: alles op één scherm, tikken in plaats van slepen.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="mobile.css">
+</head>
+<body class="mobile">
+  <div id="app" class="m-app">
+    <header class="hud">
+      <div class="stat"><span class="label">Dag</span><span class="value" id="hud-day">1</span></div>
+      <div class="stat"><span class="label">Klok</span><span class="value" id="hud-clock">11:00</span></div>
+      <div class="stat"><span class="label">Kassa</span><span class="value" id="hud-money">€ 20,00</span></div>
+      <div class="stat rep"><span class="label">Reputatie</span><div class="repbar"><div id="hud-rep"></div></div></div>
+      <div class="hud-buttons">
+        <button class="iconbtn" data-act="mute" id="btn-mute" aria-label="Geluid aan/uit">🔊</button>
+        <button class="iconbtn" data-act="pause" aria-label="Pauze">⏸</button>
+      </div>
+    </header>
+
+    <section class="counter">
+      <div class="awning"><div id="open-sign" class="open-sign">OPEN</div></div>
+      <div id="customers" class="customers"></div>
+    </section>
+
+    <section class="fryer">
+      <div id="baskets" class="baskets"></div>
+    </section>
+
+    <section class="holding-bar">
+      <div class="hb-head"><b>🧺 Uitlekbak</b><span>Tik op een klant om te serveren</span></div>
+      <div class="hb-row">
+        <div id="holding" class="holding" data-drop="holding"></div>
+        <div class="hb-actions">
+          <div id="trash" class="trash" data-drop="trash" aria-label="Prullenbak">🗑️</div>
+          <button class="trashbad" data-act="trashbad">Slechte<br>weg</button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="stockbar">
+      <div id="stock" class="stock"></div>
+    </nav>
+
+    <div id="hint" class="hint"></div>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <div id="overlay" class="overlay"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>
